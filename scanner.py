@@ -16,10 +16,11 @@ async def run_scan():
         async with TelegramClient(StringSession(session_str), api_id, api_hash) as client:
             for channel in channels:
                 try:
-                    # סורק 150 הודעות לחפש סרטים וקבצים
-                    async for message in client.iter_messages(channel, limit=150):
-                        if message.text and (message.video or message.document):
-                            # לוקח רק את שורת הכותרת ומוחק כוכביות
+                    # סורק 100 הודעות אחרונות
+                    async for message in client.iter_messages(channel, limit=100):
+                        # התנאי החדש: אם יש טקסט, והוא ארוך מ-10 אותיות - תיקח אותו!
+                        if message.text and len(message.text) > 10:
+                            # לוקח רק את השורה הראשונה בתור כותרת
                             title = message.text.split('\n')[0][:60].strip()
                             title = title.replace('*', '').replace('_', '')
                             
