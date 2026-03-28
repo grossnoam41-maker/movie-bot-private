@@ -16,18 +16,15 @@ async def run_scan():
         async with TelegramClient(StringSession(session_str), api_id, api_hash) as client:
             for channel in channels:
                 try:
-                    # סורק 150 הודעות אחרונות כדי למצוא סרטים אמיתיים
+                    # סורק 150 הודעות לחפש סרטים וקבצים
                     async for message in client.iter_messages(channel, limit=150):
-                        # בודק אם יש טקסט, ואם מצורף קובץ או וידאו
                         if message.text and (message.video or message.document):
-                            text = message.text
-                            # מסנן הודעות שהן בעצם פרסומות לקבוצות אחרות
-                            if "הצטרפו" not in text and "קבוצה" not in text and "VIP" not in text:
-                                title = text.split('\n')[0][:60] # לוקח רק את שורת הכותרת
-                                title = title.replace('*', '').replace('_', '').strip() # מנקה סימנים מיותרים
-                                
-                                link = f"https://t.me/{channel}/{message.id}"
-                                all_movies.append({"name": title, "link": link})
+                            # לוקח רק את שורת הכותרת ומוחק כוכביות
+                            title = message.text.split('\n')[0][:60].strip()
+                            title = title.replace('*', '').replace('_', '')
+                            
+                            link = f"https://t.me/{channel}/{message.id}"
+                            all_movies.append({"name": title, "link": link})
                 except Exception:
                     pass
         
